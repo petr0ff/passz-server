@@ -29,36 +29,6 @@ class Cycle(object):
         self._status_from = utils.STATUS_FROM
         self._status_to = utils.STATUS_TO
 
-    def get_project_and_cycle(self):
-        logging.info("Get project id, version id and cycle id for project '%s' and cycle '%s'" % (self._project_name,
-                                                                                                  self._cycle_name))
-        ids = {}
-        # all_projects = utils.get_request(utils.BASE_JIRA_URL + utils.ZapiCalls.GET_PROJECTS).json()
-        # project_data = filter(lambda x: x["name"] == self._project_name, all_projects)
-        # ids["project_id"] = project_data[0]["id"]
-        # #all_versions = utils.get_request(utils.BASE_JIRA_URL + utils.ZapiCalls.GET_PROJECTS + "/" + ids["project_id"]).json()
-        # all_cycles = utils.get_request(utils.BASE_JIRA_URL + utils.ZapiCalls.GET_CYCLES, params={"projectId": ids["project_id"]}).json()
-        # print all_cycles
-        # project_data = filter(lambda x: x["name"] == self._project_name, all_projects)
-        # ids["project_id"] = project_data[0]["id"]
-        params = {
-            "zqlQuery": "project=%s AND cycleName='%s'" % (self._project_name, self._cycle_name)
-        }
-        executions = utils.get_request(utils.ZapiCalls.GET_ZQL_SEARCH, params).json()
-        #ids["project_id"] = project_data[0]["id"]
-        # project_data = filter(lambda x: x["name"] == self._project_name, all_fields["fields"]["project"])
-        # if not project_data:
-        #     raise Exception("Project %s is not found!" % self._project_name)
-        # cycle_data = filter(lambda x: x["name"] == self._cycle_name, all_fields["fields"]["cycleName"])
-        # if not cycle_data:
-        #     raise Exception("Cycle %s is not found!" % self._cycle_name)
-        # ids["project_id"] = project_data[0]["id"]
-        # ids["version_id"] = cycle_data[0]["versionId"]
-        # print(ids["version_id"])
-        # ids["cycle_id"] = cycle_data[0]["id"]
-        # ids["cycle_name"] = self._cycle_name
-        return ids
-
     def get_list_of_executions(self, offset):
         params = {
             "zqlQuery": "project=%s AND cycleName='%s'" % (self._project_name, self._cycle_name),
@@ -117,18 +87,6 @@ class Cycle(object):
                 return execution
         logging.warn("Didn't find execution for issue %s" % issue_key)
         return None
-
-    @staticmethod
-    def update_bulk_executions_status(executions, status):
-        # Request doesn't work
-        execution_ids = [eid["execution"]["id"] for eid in executions]
-        logging.info("Set status %s for %s executions" % (status, len(execution_ids)))
-        req = {
-            "status": utils.STATUSES[status],
-            "executions": execution_ids
-        }
-        canonical_path = utils.ZapiCalls.POST_EXECUTIONS
-        return utils.post_request(canonical_path, json.dumps(req))
 
     @staticmethod
     def update_execution_status(execution, status):
