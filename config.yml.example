@@ -1,0 +1,12 @@
+# Create config.yml from this file and update with correct values
+jira: updateme # Jira URL
+zapi: https://prod-api.zephyr4jiracloud.com/connect
+zapi_version: /public/rest/api/1.0
+login: updateme # Jira login
+project: updateme # Your Jira project
+test_cycle: updateme # Your Zephyr test cycle that needs to be executed
+status_from: UNEXECUTED
+status_to: PASS
+# labels of test-cases
+search_by:
+- 'automated'
