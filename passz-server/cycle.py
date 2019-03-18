@@ -1,12 +1,10 @@
+import errno
 import json
 import logging
 import os
 import time
 
-import errno
-
 import utils
-
 
 if not os.path.exists(os.path.dirname("../log/")):
     try:
@@ -43,7 +41,10 @@ class Cycle(object):
         logging.info("Get all executions in Test Cycle %s" % self._cycle_name)
         processed = 0
         content = self.get_list_of_executions(processed)
-        print content
+        if not content["executions"]:
+            logging.error("Failed to find executions for Test Cycle %s in project %s", self._cycle_name,
+                          self._project_name)
+            raise ValueError
         execs = []
         total_executions = content["totalCount"]
         while processed <= total_executions:
@@ -64,7 +65,9 @@ class Cycle(object):
         """
         if labels is None:
             labels = []
-        logging.info("Find executions with status %s in Test Cycle %s" % (status, self._cycle_name))
+        logging.info("Find executions with status %s and labels %s in Test Cycle %s" % (status,
+                                                                                        labels,
+                                                                                        self._cycle_name))
         by_status = []
         logging.info("Executions search criteria: %s" % labels)
         logging.info("Total executions in cycle: %s" % len(self._executions))
